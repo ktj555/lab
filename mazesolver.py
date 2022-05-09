@@ -281,72 +281,74 @@ class point:
         self.Path.path.Push(self.last_position)
 
 
-# 실행 test
+if __name__=='__main__':
 
-# 미로 설정
-array=[[2,0,0,0,0,0,0,0,0,0],
-       [0,1,1,1,1,1,0,1,1,0],
-       [0,1,0,0,0,1,0,1,1,1],
-       [0,1,0,1,0,1,0,0,0,0],
-       [0,1,0,1,0,1,1,1,1,1],
-       [0,0,0,1,0,0,0,0,0,0],
-       [0,1,1,1,1,0,1,1,1,0],
-       [0,0,0,0,1,0,0,0,1,-1]]
+    # 실행 test
 
-a=deepcopy(array) # 후처리하려고 한 것, 무시
+    # 미로 설정
+    array=[[2,0,0,0,0,0,0,0,0,0],
+        [0,1,1,1,1,1,0,1,1,0],
+        [0,1,0,0,0,1,0,1,1,1],
+        [0,1,0,1,0,1,0,0,0,0],
+        [0,1,0,1,0,1,1,1,1,1],
+        [0,0,0,1,0,0,0,0,0,0],
+        [0,1,1,1,1,0,1,1,1,0],
+        [0,0,0,0,1,0,0,0,1,-1]]
 
-# maze 객체 생성 
-map=maze(array,start=2,end=-1)
+    a=deepcopy(array) # 후처리하려고 한 것, 무시
 
-# point 객체 생성
-p=point(map)
+    # maze 객체 생성 
+    map=maze(array,start=2,end=-1)
 
-# 생성한 maze와 point 객체를 이용하여 solve
-way=map.solve(p)
+    # point 객체 생성
+    p=point(map)
+
+    # 생성한 maze와 point 객체를 이용하여 solve
+    way=map.solve(p)
 
 
 
-# result Processing
+    # result Processing
 
-Way=pd.DataFrame(way,columns=['row','column'])
+    Way=pd.DataFrame(way,columns=['row','column'])
 
-d=Way.diff(axis=0)
+    d=Way.diff(axis=0)
 
-d['up']=d['row']==-1
-d['down']=d['row']==1
-d['right']=d['column']==1
-d['left']=d['column']==-1
+    d['up']=d['row']==-1
+    d['down']=d['row']==1
+    d['right']=d['column']==1
+    d['left']=d['column']==-1
 
-arrow=[]
+    arrow=[]
 
-for i in range(len(d)):
-    if(d['up'][i]):
-        arrow.append('^')
-    elif(d['right'][i]):
-        arrow.append('>')
-    elif(d['left'][i]):
-        arrow.append('<')
-    elif(d['down'][i]):
-        arrow.append('v')
-    else:
-        arrow.append('x')
+    for i in range(len(d)):
+        if(d['up'][i]):
+            arrow.append('^')
+        elif(d['right'][i]):
+            arrow.append('>')
+        elif(d['left'][i]):
+            arrow.append('<')
+        elif(d['down'][i]):
+            arrow.append('v')
+        else:
+            arrow.append('x')
 
-def printarray(array):
-    n,m=len(array),len(array[0])
+    def printarray(array):
+        n,m=len(array),len(array[0])
+        for i in range(n):
+            for j in range(m):
+                print("{:^3}".format(array[i][j]),end='')
+            print()
+
+    n,m=len(a),len(a[0])
     for i in range(n):
         for j in range(m):
-            print("{:^3}".format(array[i][j]),end='')
-        print()
+            if(a[i][j]==1):
+                a[i][j]='|'
+    for i in range(len(Way)):
+        a[Way['row'][i]-1][Way['column'][i]-1]=arrow[i]
 
-n,m=len(a),len(a[0])
-for i in range(n):
-    for j in range(m):
-        if(a[i][j]==1):
-            a[i][j]='|'
-for i in range(len(Way)):
-    a[Way['row'][i]-1][Way['column'][i]-1]=arrow[i]
-
-if(way==False):
-    print("No way")
-else:
-    printarray(a)
+    if(way==False):
+        print("No way")
+    else:
+        printarray(a)
